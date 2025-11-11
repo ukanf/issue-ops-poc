@@ -1,0 +1,59 @@
+name: GCP Project Creation
+
+on:
+    issues:
+        types: [opened, edited]
+        filters:
+            labels:
+                - issueops:new_gcp_project
+jobs:
+    create_gcp_project:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+            
+            - name: Set up Git
+              run: |
+                  git config --global user.name 'github-actions[bot]'
+                  git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+            
+            - name: Create Branch
+              run: |
+                    git checkout -b ${{ github.event.issue.number }}-gcp-project
+            
+            - name: Extract Issue Data
+              id: extract_data
+              run: |
+                  echo "PROJECT_NAME=$(echo '${{ github.event.issue.body }}' | jq -r '.project_name')" >> $GITHUB_ENV
+                  echo "PROJECT_TYPE=$(echo '${{ github.event.issue.body }}' | jq -r '.project_type')" >> $GITHUB_ENV
+
+            - name: Apply GCP Project Template
+              run: |
+                    PROJECT_NAME="$PROJECT_NAME"
+                    PROJECT_TYPE="$PROJECT_TYPE"
+                    
+                    # Assuming a template file exists at templates/gcp_project_template.yaml
+                    TEMPLATE_FILE="templates/gcp_project_template.yaml"
+                    OUTPUT_FILE="gcp_projects/${PROJECT_NAME}_project.yaml"
+                    
+                    mkdir -p gcp_projects
+                    
+                    sed -e "s/{{PROJECT_NAME}}/${PROJECT_NAME}/g" \
+                        -e "s/{{PROJECT_TYPE}}/${PROJECT_TYPE}/g" \
+                        $TEMPLATE_FILE > $OUTPUT_FILE
+            
+            - name: Commit and Push Changes
+              run: |
+                    git add gcp_projects/${PROJECT_NAME}_project.yaml
+                    git commit -m "Add GCP project configuration for ${PROJECT_NAME}"
+                    git push origin ${{ github.event.issue.number }}-gcp-project
+
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v4
+              with:
+                  branch: ${{ github.event.issue.number }}-gcp-project
+                  title: "Add GCP Project: ${{ github.env.PROJECT_NAME }}"
+                  body: "This PR adds the configuration for the new GCP project: ${{ github.env.PROJECT_NAME }}."
+                  labels: gcp_project:pending_review

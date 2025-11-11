@@ -1,0 +1,32 @@
+name: New GCP Project Request
+Description: Use this template to request a new Google Cloud Platform (GCP) project.
+title: "[GCP Project Request] "
+labels: 
+  - issueops:new_gcp_project
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## New GCP Project Request
+
+        Please fill out the following details to request a new GCP project.
+  - type: input
+    id: project_name
+    attributes:
+      label: Project Name
+      description: "Enter the desired name for the GCP project."
+      placeholder: "e.g., my-new-gcp-project"
+    validations:
+      required: true
+  - type: dropdown
+    id: project_type
+    attributes:
+      label: Project Type
+      description: "Specify the type of project (e.g., development, staging, production)."
+      multiple: false
+      options:
+        - Development
+        - Staging
+        - Production
+    validations:
+      required: true
