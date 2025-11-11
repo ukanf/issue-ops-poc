@@ -1,14 +1,13 @@
 name: New GCP Project Request
-Description: Use this template to request a new Google Cloud Platform (GCP) project.
-title: "[GCP Project Request] "
-labels: 
-  - issueops:new_gcp_project
+description: Use this template to request a new Google Cloud Platform (GCP) project.
+title: "[GCP Project Request]"
+labels: [issueops:new_gcp_project]
+
 body:
   - type: markdown
     attributes:
       value: |
         ## New GCP Project Request
-
         Please fill out the following details to request a new GCP project.
   - type: input
     id: project_name

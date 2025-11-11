@@ -4,8 +4,9 @@ on:
     issues:
         types: [opened, edited]
         filters:
-            labels:
-                - issueops:new_gcp_project
+            issue:
+                template: issueops:new_gcp_project
+
 jobs:
     create_gcp_project:
         runs-on: ubuntu-latest
