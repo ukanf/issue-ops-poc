@@ -1,5 +1,5 @@
 blank_issues_enabled: false
-contact_links:
-  - name: Team 1
-    url: https://support.link.to.team1
-    about: Contact Team 1 for support related to GCP projects.
+# contact_links:
+#   - name: Team 1
+#     url: https://support.link.to.team1
+#     about: Contact Team 1 for support related to GCP projects.

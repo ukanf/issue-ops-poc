@@ -3,9 +3,9 @@ name: GCP Project Creation
 on:
     issues:
         types: [opened, edited]
-        filters:
-            issue:
-                template: issueops:new_gcp_project
+        # filters:
+        #     issue:
+        #         template: issueops:new_gcp_project
 
 jobs:
     create_gcp_project:
@@ -26,35 +26,37 @@ jobs:
             
             - name: Extract Issue Data
               id: extract_data
-              run: |
-                  echo "PROJECT_NAME=$(echo '${{ github.event.issue.body }}' | jq -r '.project_name')" >> $GITHUB_ENV
-                  echo "PROJECT_TYPE=$(echo '${{ github.event.issue.body }}' | jq -r '.project_type')" >> $GITHUB_ENV
-
-            - name: Apply GCP Project Template
-              run: |
-                    PROJECT_NAME="$PROJECT_NAME"
-                    PROJECT_TYPE="$PROJECT_TYPE"
-                    
-                    # Assuming a template file exists at templates/gcp_project_template.tf
-                    TEMPLATE_FILE="templates/gcp_project_template.tf"
-                    OUTPUT_FILE="gcp_projects/${PROJECT_NAME}_project.tf"
-                    
-                    mkdir -p gcp_projects
-                    
-                    sed -e "s/{{PROJECT_NAME}}/${PROJECT_NAME}/g" \
-                        -e "s/{{PROJECT_TYPE}}/${PROJECT_TYPE}/g" \
-                        $TEMPLATE_FILE > $OUTPUT_FILE
-            
-            - name: Commit and Push Changes
-              run: |
-                    git add gcp_projects/${PROJECT_NAME}_project.tf
-                    git commit -m "Add GCP project configuration for ${PROJECT_NAME}"
-                    git push origin ${{ github.event.issue.number }}-gcp-project
-
-            - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v4
+              uses: actions/github-script@v6
               with:
-                  branch: ${{ github.event.issue.number }}-gcp-project
-                  title: "Add GCP Project: ${{ github.env.PROJECT_NAME }}"
-                  body: "This PR adds the configuration for the new GCP project: ${{ github.env.PROJECT_NAME }}."
-                  labels: gcp_project:pending_review
+                script: |
+                  const issue = context.payload.issue;
+                  const body = issue.body;
+
+                  console.log("Issue Body:", body);
+
+                  const projectNameMatch = body.match(/### Project Name\s+(.+)/);
+                  const projectTypeMatch = body.match(/### Project Type\s+(.+)/);
+
+                  const projectName = projectNameMatch ? projectNameMatch[1].trim() : null;
+                  const projectType = projectTypeMatch ? projectTypeMatch[1].trim() : null;
+
+                  core.exportVariable('PROJECT_NAME', projectName);
+                  core.exportVariable('PROJECT_TYPE', projectType);
+
+            - name: Apply Template
+              run: |
+                cp templates/gcp_project_template.yaml gcp_projects/${{ github.event.issue.number }}.tf
+                envsubst < gcp_projects/${{ github.event.issue.number }}.tf > gcp_projects/${{ github.event.issue.number }}_final.tf
+                mv gcp_projects/${{ github.event.issue.number }}_final.tf gcp_projects/${{ github.event.issue.number }}.tf
+                git add gcp_projects/${{ github.event.issue.number }}.tf
+                git commit -m "Add GCP project configuration for issue #${{ github.event.issue.number }}"
+
+            - name: Push Changes
+              run: |
+                  git push origin ${{ github.event.issue.number }}
+            
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v5
+              with:
+                branch: ${{ github.event.issue.number }}-gcp-project
+                title: "Add GCP Project for Issue #${{ github.event.issue.number }}"
