@@ -12,6 +12,8 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            - name: Ensure gcp_projects directory exists
+              run: mkdir -p gcp_projects
             - name: Checkout repository
               uses: actions/checkout@v3
             
