@@ -1,5 +1,9 @@
 name: GCP Project Creation
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
     issues:
         types: [opened, edited]
