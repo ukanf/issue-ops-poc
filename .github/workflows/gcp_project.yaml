@@ -45,7 +45,7 @@ jobs:
 
             - name: Apply Template
               run: |
-                cp templates/gcp_project_template.yaml gcp_projects/${{ github.event.issue.number }}.tf
+                cp templates/gcp_project_template.tf gcp_projects/${{ github.event.issue.number }}.tf
                 envsubst < gcp_projects/${{ github.event.issue.number }}.tf > gcp_projects/${{ github.event.issue.number }}_final.tf
                 mv gcp_projects/${{ github.event.issue.number }}_final.tf gcp_projects/${{ github.event.issue.number }}.tf
                 git add gcp_projects/${{ github.event.issue.number }}.tf
