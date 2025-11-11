@@ -60,7 +60,7 @@ jobs:
                 envsubst < gcp_projects/${{ github.event.issue.number }}.tf > gcp_projects/${{ github.event.issue.number }}_final.tf
                 mv gcp_projects/${{ github.event.issue.number }}_final.tf gcp_projects/${{ github.event.issue.number }}.tf
                 git add gcp_projects/${{ github.event.issue.number }}.tf
-                git commit -m "Add GCP project configuration for issue #${{ github.event.issue.number }}"
+                git commit -m "Add GCP project configuration for ${{ env.PROJECT_NAME }}"
 
             - name: Push Changes
               env:
@@ -72,4 +72,4 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
               run: |
-                gh pr create --title "Add GCP Project for Issue #${{ github.event.issue.number }}" --body "This PR adds the GCP project configuration as requested in issue #${{ github.event.issue.number }}." --head ${{ github.event.issue.number }}-gcp-project --base main
+                gh pr create --title "Add GCP Project for ${{ env.PROJECT_NAME }}" --body "This PR adds the GCP project configuration as requested in issue #${{ github.event.issue.number }}." --head ${{ github.event.issue.number }}-gcp-project --base main
