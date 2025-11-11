@@ -35,9 +35,9 @@ jobs:
                     PROJECT_NAME="$PROJECT_NAME"
                     PROJECT_TYPE="$PROJECT_TYPE"
                     
-                    # Assuming a template file exists at templates/gcp_project_template.yaml
-                    TEMPLATE_FILE="templates/gcp_project_template.yaml"
-                    OUTPUT_FILE="gcp_projects/${PROJECT_NAME}_project.yaml"
+                    # Assuming a template file exists at templates/gcp_project_template.tf
+                    TEMPLATE_FILE="templates/gcp_project_template.tf"
+                    OUTPUT_FILE="gcp_projects/${PROJECT_NAME}_project.tf"
                     
                     mkdir -p gcp_projects
                     
@@ -47,7 +47,7 @@ jobs:
             
             - name: Commit and Push Changes
               run: |
-                    git add gcp_projects/${PROJECT_NAME}_project.yaml
+                    git add gcp_projects/${PROJECT_NAME}_project.tf
                     git commit -m "Add GCP project configuration for ${PROJECT_NAME}"
                     git push origin ${{ github.event.issue.number }}-gcp-project
 
