@@ -21,7 +21,6 @@ jobs:
               with:
                 app_id: ${{ secrets.APP_ID }}
                 private_key: ${{ secrets.PRIVATE_KEY }}
-                installation_id: ${{ secrets.INSTALLATION_ID }}
             
             - name: Set up Git
               run: |
@@ -63,7 +62,8 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
               run: |
-                  git push origin ${{ github.event.issue.number }}-gcp-project
+                git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
+                git push origin ${{ github.event.issue.number }}-gcp-project
             
             - name: Create Pull Request
               env:
