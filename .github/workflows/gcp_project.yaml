@@ -53,7 +53,7 @@ jobs:
 
             - name: Push Changes
               run: |
-                  git push origin ${{ github.event.issue.number }}
+                  git push origin ${{ github.event.issue.number }}-gcp-project
 
             - name: Generate GitHub App token
               id: app-token
