@@ -60,6 +60,8 @@ jobs:
                 git commit -m "Add GCP project configuration for issue #${{ github.event.issue.number }}"
 
             - name: Push Changes
+              env:
+                GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
               run: |
                   git push origin ${{ github.event.issue.number }}-gcp-project
             
